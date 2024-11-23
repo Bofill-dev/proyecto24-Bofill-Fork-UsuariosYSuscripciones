@@ -111,3 +111,4 @@ def usuarios_id_usuario_suscripcion_post(body, id_usuario):  # noqa: E501
     if connexion.request.is_json:
         body = Suscripcion.from_dict(connexion.request.get_json())  # noqa: E501
     return 'do some magic!'
+
