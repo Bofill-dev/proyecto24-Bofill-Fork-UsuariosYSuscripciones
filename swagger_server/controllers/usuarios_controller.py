@@ -122,7 +122,4 @@ def usuarios_put(body):  # noqa: E501
         body = Usuario.from_dict(connexion.request.get_json())  # noqa: E501
         user = User_DA.update_user(body)
     return None
-<<<<<<< HEAD
- 
-=======
->>>>>>> 4c68f20f0abd8b8c8cf78d3e89ce087d7c15825f
+
