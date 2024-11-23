@@ -1,0 +1,594 @@
+openapi: 3.0.0
+info:
+  title: User API
+  version: 1.0.0
+servers:
+- url: /api
+tags:
+- name: Usuarios
+  description: Todas las operaciones relacionadas con los usuarios
+- name: Perfiles
+  description: Todas las operaciones relacionadas con los perfiles
+- name: Planes
+  description: Todas las operaciones relacionadas con los planes de suscripción
+- name: Suscripciones
+  description: Todas las operaciones relacinadas con las suscripciones de los usuarios
+paths:
+  /usuarios:
+    get:
+      tags:
+      - Usuarios
+      summary: Obtener lista de usuarios que se encuentra en la base de datos
+      operationId: usuarios_get
+      responses:
+        "200":
+          description: Devuelve una lista con los usuarios regustrados en la web
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+                x-content-type: application/json
+              example:
+              - id: 1
+                nombre: Lucia
+                apellido: Pérez
+                email: luuperez@example.com
+              - id: 2
+                nombre: Adolfo
+                apellido: Sancho
+                email: adolfsancho@example.com
+      x-openapi-router-controller: swagger_server.controllers.usuarios_controller
+    put:
+      tags:
+      - Usuarios
+      summary: Actualizar un usuario segun la ID pasada en el objeto usuario
+      operationId: usuarios_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+        required: true
+      responses:
+        "200":
+          description: Usuario actualizado
+      x-openapi-router-controller: swagger_server.controllers.usuarios_controller
+    post:
+      tags:
+      - Usuarios
+      summary: Crear un nuevo usuario en la pagina web
+      operationId: usuarios_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+        required: true
+      responses:
+        "201":
+          description: Usuario creado exitosamente
+      x-openapi-router-controller: swagger_server.controllers.usuarios_controller
+  /usuarios/{id}:
+    get:
+      tags:
+      - Usuarios
+      summary: Obtener un usuario por la ID pasada
+      operationId: usuarios_id_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Datos del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+      x-openapi-router-controller: swagger_server.controllers.usuarios_controller
+    delete:
+      tags:
+      - Usuarios
+      summary: Eliminar un usuario según la ID pasada
+      operationId: usuarios_id_delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Usuario eliminado
+      x-openapi-router-controller: swagger_server.controllers.usuarios_controller
+  /usuarios/perfiles:
+    put:
+      tags:
+      - Perfiles
+      summary: Actualizar un perfil dada la ID del objeto pasado
+      operationId: usuarios_perfiles_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Perfil'
+        required: true
+      responses:
+        "200":
+          description: Perfil actualizado
+      x-openapi-router-controller: swagger_server.controllers.perfiles_controller
+    post:
+      tags:
+      - Perfiles
+      summary: Crear un perfil de usuario asociado a un usuario
+      operationId: usuarios_perfiles_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Perfil'
+        required: true
+      responses:
+        "201":
+          description: Perfil creado exitosamente
+      x-openapi-router-controller: swagger_server.controllers.perfiles_controller
+  /usuarios/perfiles/{id}:
+    get:
+      tags:
+      - Perfiles
+      summary: Obtener un perfil por la ID del perfil
+      operationId: usuarios_perfiles_id_get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Datos del perfil seleccionado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Perfil'
+      x-openapi-router-controller: swagger_server.controllers.perfiles_controller
+    delete:
+      tags:
+      - Perfiles
+      summary: Eliminar un perfil dada un ID
+      operationId: usuarios_perfiles_id_delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Perfil eliminado
+      x-openapi-router-controller: swagger_server.controllers.perfiles_controller
+  /login:
+    get:
+      tags:
+      - Usuarios
+      summary: Iniciar sesión
+      description: Permite verificar las credenciales de un usuario para iniciar sesión.
+      operationId: login_get
+      parameters:
+      - name: username
+        in: query
+        description: Nombre de usuario para autenticación.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: password
+        in: query
+        description: Contraseña del usuario.
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: "Credenciales correctas, sesión iniciada."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        "401":
+          description: "Credenciales incorrectas, no autorizado."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_401'
+      x-openapi-router-controller: swagger_server.controllers.usuarios_controller
+  /planes:
+    get:
+      tags:
+      - Planes
+      summary: Obtener lista de planes de suscripción que se enucuentren en la base
+        de datos
+      operationId: planes_get
+      responses:
+        "200":
+          description: Lista de planes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+              example:
+              - id_plan: "1"
+                nombre_plan: Plan premium
+                precio: 7.99
+                description: Visualización en hd de contenido exclusivo
+              - id_plan: "2"
+                nombre_plan: Plan básico
+                precio: 3.99
+                description: Visualización en 480p de contenido
+      x-openapi-router-controller: swagger_server.controllers.planes_controller
+    put:
+      tags:
+      - Planes
+      summary: Actualizar una suscripción existente por ID
+      description: "Actualiza la suscripción n. Permite cambiar detalles como el plan,\
+        \ precio y estado."
+      operationId: planes_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plan'
+        required: true
+      responses:
+        "200":
+          description: Suscripción actualizada con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+        "404":
+          description: Suscripción no encontrada.
+      x-openapi-router-controller: swagger_server.controllers.planes_controller
+    post:
+      tags:
+      - Planes
+      summary: Crear un nuevo plan de suscripción
+      operationId: planes_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Plan'
+        required: true
+      responses:
+        "201":
+          description: Plan de suscripción creado exitosamente
+      x-openapi-router-controller: swagger_server.controllers.planes_controller
+  /planes/{id_plan}:
+    delete:
+      tags:
+      - Planes
+      summary: Eliminar una suscripción por ID
+      description: Elimina una suscripción existente dada la ID de la suscripción.
+      operationId: planes_id_plan_delete
+      parameters:
+      - name: id_plan
+        in: path
+        description: ID del plan que se quiere eliminar.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Plan de suscripción eliminado con éxito.
+        "404":
+          description: Plan de suscripción no encontrado.
+      x-openapi-router-controller: swagger_server.controllers.planes_controller
+  /usuarios/{id_usuario}/perfiles:
+    get:
+      tags:
+      - Perfiles
+      summary: Obtener todos los perfiles asociados a un usuario
+      description: Devuelve una lista de todos los perfiles asociados a un usuario
+        específico según el ID del usuario.
+      operationId: usuarios_id_usuario_perfiles_get
+      parameters:
+      - name: id_usuario
+        in: path
+        description: ID del usuario
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Lista de perfiles del usuario
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Perfil'
+                x-content-type: application/json
+        "404":
+          description: Usuario no encontrado o sin perfiles
+      x-openapi-router-controller: swagger_server.controllers.perfiles_controller
+  /usuarios/{id_usuario}/suscripcion:
+    get:
+      tags:
+      - Suscripciones
+      summary: Obtener el nombre del plan de suscripción de un usuario
+      description: Devuelve el nombre del plan de suscripción al que está suscrito
+        un usuario específico según el ID del usuario.
+      operationId: usuarios_id_usuario_suscripcion_get
+      parameters:
+      - name: id_usuario
+        in: path
+        description: ID del usuario
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Nombre del plan de suscripción del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200_1'
+        "404":
+          description: Usuario no encontrado o sin suscripción activa
+      x-openapi-router-controller: swagger_server.controllers.suscripciones_controller
+    post:
+      tags:
+      - Suscripciones
+      summary: Crear una nueva suscripción para un usuario
+      description: Permite crear una suscripción. La suscripción se añadirá con el
+        plan y detalles proporcionados.
+      operationId: usuarios_id_usuario_suscripcion_post
+      parameters:
+      - name: id_usuario
+        in: path
+        description: ID del usuario para el que se va a crear la suscripción.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Suscripcion'
+        required: true
+      responses:
+        "201":
+          description: Suscripción creada con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Suscripcion'
+        "400":
+          description: "Solicitud incorrecta, faltan datos o parámetros."
+      x-openapi-router-controller: swagger_server.controllers.suscripciones_controller
+  /suscripciones:
+    put:
+      tags:
+      - Suscripciones
+      summary: Actualizar los detalles de la suscripción de usuario
+      description: "Permite actualizar los detalles de la suscripción de un usuario,\
+        \ como las fechas o el estado de la suscripción."
+      operationId: suscripciones_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Suscripcion'
+        required: true
+      responses:
+        "200":
+          description: Suscripción de usuario actualizada con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Suscripcion'
+        "404":
+          description: Suscripción de usuario no encontrada.
+      x-openapi-router-controller: swagger_server.controllers.suscripciones_controller
+    post:
+      tags:
+      - Suscripciones
+      summary: Crear una nueva suscripción de usuario
+      description: Crea una nueva relación entre un usuario y un plan de suscripción.
+      operationId: suscripciones_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Suscripcion'
+        required: true
+      responses:
+        "201":
+          description: Suscripción de usuario creada con éxito.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Suscripcion'
+        "400":
+          description: "Solicitud incorrecta, faltan datos o parámetros."
+      x-openapi-router-controller: swagger_server.controllers.suscripciones_controller
+  /suscripciones/{id_subscription}:
+    get:
+      tags:
+      - Suscripciones
+      summary: Obtener las suscripciones de un usuario
+      description: "Devuelve todas las suscripciones (activas, canceladas, o finalizadas)\
+        \ asociadas a un usuario específico según el ID del usuario."
+      operationId: suscripciones_id_subscription_get
+      parameters:
+      - name: id_subscription
+        in: path
+        description: ID del usuario para obtener todas sus suscripciones.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Lista de suscripciones del usuario.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Suscripcion'
+                x-content-type: application/json
+        "404":
+          description: Usuario no encontrado o sin suscripciones.
+      x-openapi-router-controller: swagger_server.controllers.suscripciones_controller
+    delete:
+      tags:
+      - Suscripciones
+      summary: Eliminar una suscripción de usuario
+      description: Elimina una relación de suscripción existente entre un usuario
+        y un plan de suscripción.
+      operationId: suscripciones_id_subscription_delete
+      parameters:
+      - name: id_subscription
+        in: path
+        description: ID de la suscripción de usuario a eliminar.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Suscripción de usuario eliminada con éxito.
+        "404":
+          description: Suscripción de usuario no encontrada.
+      x-openapi-router-controller: swagger_server.controllers.suscripciones_controller
+components:
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+        nombre:
+          type: string
+        apellido:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+      example:
+        id: 1
+        nombre: Juan
+        apellido: Pérez
+        email: juan.perez@example.com
+        password: miContraseña789
+        role: user
+    Perfil:
+      type: object
+      properties:
+        id:
+          type: integer
+        id_usuario:
+          type: integer
+        apodo:
+          type: string
+        imagen_avatar:
+          type: string
+      example:
+        id: 2
+        id_usuario: 1
+        apodo: JJPerez
+        imagen_avatar: https://example.com/avatars/avatar2.png
+    Suscripcion:
+      type: object
+      properties:
+        id_subscription:
+          type: integer
+        id_usuario:
+          type: integer
+        id_plan:
+          type: integer
+        fecha_inicio:
+          type: string
+          format: date
+        fecha_fin:
+          type: string
+          format: date
+        estado:
+          type: string
+          description: "Estado de la suscripción (e.g., activa, cancelada, expirada)."
+      example:
+        estado: estado
+        fecha_inicio: 2000-01-23
+        id_usuario: 6
+        id_subscription: 0
+        fecha_fin: 2000-01-23
+        id_plan: 1
+    Plan:
+      type: object
+      properties:
+        id_plan:
+          type: integer
+        nombre_plan:
+          type: string
+        precio:
+          type: number
+        descripcion:
+          type: string
+      example:
+        id_plan: 101
+        nombre_plan: Plan Premium
+        precio: 29.99
+        descripcion: Acceso ilimitado a todos los recursos y soporte prioritario.
+    inline_response_200:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+      example:
+        success: true
+    inline_response_401:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+    inline_response_200_1:
+      type: object
+      properties:
+        nombre_plan:
+          type: string
+          description: Nombre del plan de suscripción
+      example:
+        nombre_plan: nombre_plan
+
