@@ -81,4 +81,3 @@ class User_DA:
         user = db.query(User).get(id_usuario)
         return user.subscriptions
     
-
